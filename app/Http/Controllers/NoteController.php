@@ -13,8 +13,8 @@ class NoteController extends Controller
      */
     public function index()
     {
+        $this->authorize('viewAny', Note::class);
         $notes = Note::where("user_id", Auth::id())->get();
-
         return view('notes.index', compact('notes'));
     }
 
@@ -23,6 +23,7 @@ class NoteController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Note::class);
         return view('notes.create');
     }
 
@@ -31,15 +32,11 @@ class NoteController extends Controller
      */
     public function store(Request $request)
     {
-        // Validation basique à compléter
-        // $validated = $request->validate([
-            
-        // ]);
+        $this->authorize('create', Note::class);
 
         $note = new Note($validated);
         $note->user()->associate(Auth::user());
         $note->save();
-
 
         return redirect()
             ->route('notes.index')
@@ -51,6 +48,7 @@ class NoteController extends Controller
      */
     public function show(Note $note)
     {
+        $this->authorize('view', $note);
         return view('notes.show', compact('note'));
     }
 
@@ -59,6 +57,7 @@ class NoteController extends Controller
      */
     public function edit(Note $note)
     {
+        $this->authorize('update', $note);
         return view('notes.edit', compact('note'));
     }
 
@@ -67,10 +66,7 @@ class NoteController extends Controller
      */
     public function update(Request $request, Note $note)
     {
-        // Validation basique à compléter
-        // $validated = $request->validate([
-            
-        // ]);
+        $this->authorize('update', $note);
 
         $note->update($validated);
 
@@ -84,8 +80,8 @@ class NoteController extends Controller
      */
     public function destroy(Note $note)
     {
+        $this->authorize('delete', $note);
         $note->delete();
-
         return redirect()
             ->route('notes.index')
             ->with('status', 'Note supprimée avec succès.');
