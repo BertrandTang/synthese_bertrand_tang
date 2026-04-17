@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Note;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class NotePolicy
 {
@@ -16,6 +15,7 @@ class NotePolicy
         if ($user->hasRole('admin')) {
             return true;
         }
+
         return null;
     }
 

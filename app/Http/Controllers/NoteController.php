@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NoteCreated;
 use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Mail\NoteCreated;
 use Illuminate\Support\Facades\Mail;
-
 
 class NoteController extends Controller
 {
@@ -20,6 +19,7 @@ class NoteController extends Controller
         $notes = $user->hasRole('admin')
             ? Note::all()
             : Note::where('user_id', $user->id)->get();
+
         return view('notes.index', compact('notes'));
     }
 
@@ -92,6 +92,7 @@ class NoteController extends Controller
     public function destroy(Note $note)
     {
         $note->delete();
+
         return redirect()
             ->route('notes.index')
             ->with('status', 'Note supprimée avec succès.');

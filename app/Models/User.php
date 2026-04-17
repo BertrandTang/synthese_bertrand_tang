@@ -16,7 +16,7 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, HasRoles, Notifiable;
 
     /**
      * Get the attributes that should be cast.
@@ -31,8 +31,8 @@ class User extends Authenticatable
         ];
     }
 
-        public function notes()
+    public function notes()
     {
-        return $this->hasMany(Note::class)->withTimestamps(); 
+        return $this->hasMany(Note::class)->withTimestamps();
     }
 }
