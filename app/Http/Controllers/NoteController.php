@@ -34,6 +34,11 @@ class NoteController extends Controller
     {
         $this->authorize('create', Note::class);
 
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'min:3', 'max:255'],
+            'content' => ['required', 'string', 'min:5'],
+        ]);
+
         $note = new Note($validated);
         $note->user()->associate(Auth::user());
         $note->save();
@@ -67,6 +72,11 @@ class NoteController extends Controller
     public function update(Request $request, Note $note)
     {
         $this->authorize('update', $note);
+
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'min:3', 'max:255'],
+            'content' => ['required', 'string', 'min:5'],
+        ]);
 
         $note->update($validated);
 
