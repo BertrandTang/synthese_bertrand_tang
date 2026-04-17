@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Mail\NoteCreated;
+use Illuminate\Support\Facades\Mail;
+
 
 class NoteController extends Controller
 {
@@ -13,8 +16,10 @@ class NoteController extends Controller
      */
     public function index()
     {
-        $this->authorize('viewAny', Note::class);
-        $notes = Note::where("user_id", Auth::id())->get();
+        $user = auth()->user();
+        $notes = $user->hasRole('admin')
+            ? Note::all()
+            : Note::where('user_id', $user->id)->get();
         return view('notes.index', compact('notes'));
     }
 
@@ -23,7 +28,6 @@ class NoteController extends Controller
      */
     public function create()
     {
-        $this->authorize('create', Note::class);
         return view('notes.create');
     }
 
@@ -32,8 +36,6 @@ class NoteController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('create', Note::class);
-
         $validated = $request->validate([
             'title' => ['required', 'string', 'min:3', 'max:255'],
             'content' => ['required', 'string', 'min:5'],
@@ -42,6 +44,9 @@ class NoteController extends Controller
         $note = new Note($validated);
         $note->user()->associate(Auth::user());
         $note->save();
+
+        Mail::to('example@gmail.com')
+            ->send(new NoteCreated($note));
 
         return redirect()
             ->route('notes.index')
@@ -53,7 +58,6 @@ class NoteController extends Controller
      */
     public function show(Note $note)
     {
-        $this->authorize('view', $note);
         return view('notes.show', compact('note'));
     }
 
@@ -62,7 +66,6 @@ class NoteController extends Controller
      */
     public function edit(Note $note)
     {
-        $this->authorize('update', $note);
         return view('notes.edit', compact('note'));
     }
 
@@ -71,8 +74,6 @@ class NoteController extends Controller
      */
     public function update(Request $request, Note $note)
     {
-        $this->authorize('update', $note);
-
         $validated = $request->validate([
             'title' => ['required', 'string', 'min:3', 'max:255'],
             'content' => ['required', 'string', 'min:5'],
@@ -90,7 +91,6 @@ class NoteController extends Controller
      */
     public function destroy(Note $note)
     {
-        $this->authorize('delete', $note);
         $note->delete();
         return redirect()
             ->route('notes.index')
