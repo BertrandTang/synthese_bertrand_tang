@@ -32,7 +32,7 @@
                             @enderror
                         </div>
 
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Mettre à jour</button>
+                        <button type="submit" class="bg-yellow-400 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded border border-black">Mettre à jour</button>
                     </form>
                 </div>
             </div>
