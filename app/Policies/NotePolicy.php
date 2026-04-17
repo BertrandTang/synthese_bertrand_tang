@@ -13,7 +13,7 @@ class NotePolicy
      */
     public function before(User $user, string $ability): ?bool
     {
-        if ($user->hasRole('admin') && $user->hasPermissionTo('manage notes')) {
+        if ($user->hasRole('admin')) {
             return true;
         }
         return null;
